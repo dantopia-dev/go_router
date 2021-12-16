@@ -641,30 +641,30 @@ void main() {
         GoRoute(
           path: '/',
           redirect: (_) => '/family/f2',
+        ),
+        GoRoute(
+          path: '/family/:fid',
+          builder: (context, state) => FamilyScreen(
+            state.params['fid']!,
+          ),
           routes: [
             GoRoute(
-              path: 'family/:fid',
-              builder: (context, state) => FamilyScreen(
+              name: 'person',
+              path: 'person:pid',
+              builder: (context, state) => PersonScreen(
                 state.params['fid']!,
+                state.params['pid']!,
               ),
-              routes: [
-                GoRoute(
-                  name: 'person',
-                  path: 'person:pid',
-                  builder: (context, state) => PersonScreen(
-                    state.params['fid']!,
-                    state.params['pid']!,
-                  ),
-                ),
-              ],
             ),
           ],
         ),
       ];
-      expect(() {
-        final router = _router(routes);
-        router.goNamed('person', params: {'fid': 'f2', 'pid': 'p1'});
-      }, throwsException);
+
+      final router = _router(routes);
+      router.goNamed('person', params: {'fid': 'f2', 'pid': 'p1'});
+
+      final matches = router.routerDelegate.matches;
+      expect(router.screenFor(matches.last).runtimeType, PersonScreen);
     });
 
     test('preserve path param spaces and slashes', () {
